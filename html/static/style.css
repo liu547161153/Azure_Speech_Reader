@@ -1,0 +1,53 @@
+#container {
+    margin: 20px;
+    text-align: center;
+}
+
+textarea {
+    width: 80%;
+    height: 100px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+}
+#textDisplayContainer {
+    /* 添加所需样式，例如边框、内边距等 */
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    white-space: pre-wrap; /* 保持文本的换行和空格 */
+}
+
+.highlight {
+    background-color: yellow; /* 高亮颜色，可根据需要调整 */
+}
+
+#rateControl {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 为元素之间添加间隙 */
+    background-color: #f8f9fa; /* 背景色 */
+    padding: 10px;
+    border-radius: 5px; /* 圆角 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 阴影 */
+}
+
+#rateSlider {
+    width: 100px; /* 滑动条宽度 */
+}
+
+#rateValue {
+    font-weight: bold;
+}
+#floatingControls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#controlsContainer.hidden {
+    display: none;
+}

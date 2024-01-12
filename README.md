@@ -1,0 +1,2 @@
+# Azure_Speech_Reader
+使用Azure语音生成功能阅读小说的工具，自动识别对话与旁白分开设定讲话人

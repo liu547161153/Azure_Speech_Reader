@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读器</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+<body>
+    <div id="container">
+        <label for="apiUrl">API接口URL:</label>
+        <input type="text" id="apiUrl" value="https://127.0.0.1:8751/tts"> <!-- 默认API URL，用户可以修改 -->
+        <input type="file" id="fileInput" accept=".txt">
+        <select id="encodingSelect">
+            <option value="UTF-8">UTF-8</option>
+            <option value="GBK">GBK</option>
+            <option value="ISO-8859-1">ISO-8859-1</option>
+            <!-- 添加其他您需要的编码 -->
+        </select>
+        <textarea id="textInput" placeholder="或者复制内容到这里"></textarea>
+
+        <button id="readButton">阅读文本</button>
+    </div>
+    <div id="floatingControls">
+    <button id="toggleControls">☰</button> <!-- 主控制按钮 -->
+    <div id="controlsContainer" class="hidden">
+        <button id="backToTopButton">返回顶部</button>
+        <button id="togglePlayButton">暂停</button>
+        <button id="saveButton">保存文本</button>
+        <div id="rateControl">
+            <label for="rateSlider">语速调节:</label>
+            <input type="range" id="rateSlider" min="0.5" max="2.0" value="1.0" step="0.1">
+            <span id="rateValue">1.0</span>x
+        </div>
+    </div>
+    </div>
+
+    <div id="textDisplayContainer"></div>
+</body>
+<script src="static/script.js"></script>
+</html>

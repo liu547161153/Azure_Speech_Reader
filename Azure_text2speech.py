@@ -1,7 +1,6 @@
 import aiohttp
 
 
-
 class Azure_text2speech:
     def __init__(self, api_key, region):
 
@@ -11,7 +10,8 @@ class Azure_text2speech:
         self.proxy_url = "http://127.0.0.1:10808"
         self.session = aiohttp.ClientSession()
 
-    async def text_to_speech(self, text, style=None, voice_name="zh-CN-XiaoxiaoNeural", role=None, rate=1.0, styledegree=1):
+    async def text_to_speech(self, text, style=None, voice_name="zh-CN-XiaoxiaoNeural", role=None, rate=1.0,
+                             styledegree=1):
         # 计算相对于正常语速的变化百分比
         rate_change = (rate - 1.0) * 100
         rate_change = round(rate_change)  # 四舍五入到最近的整数
@@ -47,15 +47,18 @@ class Azure_text2speech:
             body += "</mstts:express-as>"
         body += "</voice></speak>"
 
-        #使用代理
-        # async with self.session.post(url, headers=headers, data=body, proxy=self.proxy_url) as response:
-        #直接访问
-        async with self.session.post(url, headers=headers, data=body) as response:
-            if response.status == 200:
-                return await response.read()
-            else:
-                print("Failed to synthesize speech. Status Code:", response.status)
-                return None
+        try:
+            # 使用代理
+            # async with self.session.post(url, headers=headers, data=body, proxy=self.proxy_url) as response:
+            # 直接访问
+            async with self.session.post(url, headers=headers, data=body) as response:
+                if response.status == 200:
+                    return await response.read()
+                else:
+                    print("Failed to synthesize speech. Status Code:", response.status)
+                    return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     async def close(self):
         await self.session.close()

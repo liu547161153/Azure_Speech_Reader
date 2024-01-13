@@ -55,7 +55,7 @@ async def read_item(request: Request):
             dialogue_with_pause = dialogue + "<break time='500ms'/>"  # 500毫秒的暂停
             if use_chat_style:
                 audio_data = await azure_tts.text_to_speech(dialogue_with_pause, voice_name="zh-CN-XiaoxuanNeural",
-                                                            role="YoungAdultmale", rate=float(rate) + 0.05, style=style,
+                                                            role="YoungAdultmale", rate=float(rate) + 0.1, style=style,
                                                             styledegree=styledegree)
                 use_chat_style = False  # 下一个对话将使用默认样式
             else:

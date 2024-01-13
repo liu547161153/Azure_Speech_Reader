@@ -1,4 +1,8 @@
-fastapi
+fastapi~=0.108.0
 uvicorn
-aiohttp
-python-dotenv
+aiohttp~=3.9.1
+python-dotenv~=1.0.0
+jieba~=0.42.1
+numpy~=1.24.2
+keras
+tensorflow

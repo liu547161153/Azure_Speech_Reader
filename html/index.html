@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阅读器</title>
-    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="stylesheet" type="text/css" href="static/style.css?v=20230331" >
 </head>
 <body>
     <div id="container">
@@ -18,13 +18,16 @@
             <!-- 添加其他您需要的编码 -->
         </select>
         <textarea id="textInput" placeholder="或者复制内容到这里"></textarea>
-
         <button id="readButton">阅读文本</button>
+    </div>
+    <div id="loadingTooltip" style="display: none; position: absolute; background-color: #f9f9f9; border: 1px solid #d3d3d3; padding: 5px; border-radius: 5px; z-index: 100;">
+    正在加载新段落...
     </div>
     <div id="floatingControls">
     <button id="toggleControls">☰</button> <!-- 主控制按钮 -->
     <div id="controlsContainer" class="hidden">
         <button id="backToTopButton">返回顶部</button>
+        <button id="toggleDarkMode">深色模式</button>
         <button id="togglePlayButton">暂停</button>
         <button id="saveButton">保存文本</button>
         <div id="rateControl">

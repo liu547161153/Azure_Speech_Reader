@@ -28,6 +28,10 @@ window.onload = function() {
     event.stopPropagation(); // 阻止事件冒泡
     });
 
+    document.getElementById('toggleDarkMode').addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    });
+
     // 如果点击的是控制面板或按钮以外的地方，关闭控制面板
     document.addEventListener('click', function(event) {
     var controls = document.getElementById('controlsContainer');
@@ -64,6 +68,7 @@ window.onload = function() {
         }
     });
 
+
     // Function to handle read button click
     readButton.addEventListener('click', function() {
         currentIndex = 0;
@@ -80,6 +85,8 @@ window.onload = function() {
     // Custom set of dialogue markers
     const dialogueMarkers = ['「', '」', '『', '』'];
     const newDialogueMarker = ['“', '”'];
+
+
 
     // Function to replace dialogue markers, split text, and create segments
     function splitAndReplaceDialogue(text) {
@@ -126,7 +133,6 @@ window.onload = function() {
 
 
     function playNextAudio() {
-
     if (audioQueue.length > 0 && !isPlaying) {
         const audioBlob = audioQueue.shift();
         const url = URL.createObjectURL(audioBlob);
@@ -136,12 +142,14 @@ window.onload = function() {
         const segmentsRange = audioSegmentsMap.shift();
         highlightSegmentsRange(segmentsRange.start, segmentsRange.end);
         isPlaying = true;
+        hideTooltip();
         audio.play();
         let hasPrefetched = false; // 新增一个本地标记
         audio.addEventListener('timeupdate', function() {
             const currentTime = audio.currentTime;
             const duration = audio.duration;
             if (currentTime / duration > 0.7 && !hasPrefetched && currentIndex < textChunks.length) {
+
                 prefetchNextBatch();
                 hasPrefetched = true; // 设置本地标记，避免重复预载入
             }
@@ -158,6 +166,8 @@ window.onload = function() {
                 hasPrefetched = false; // 重置预载入标记
             }
         };
+    }else {
+        console.log("playNextAudio not executed due to conditions");
     }
 }
     // 为暂停/播放按钮添加事件监听器
@@ -175,18 +185,19 @@ window.onload = function() {
     });
 
     function prefetchNextBatch() {
-
-        if (currentIndex < textChunks.length) {
+        if (currentIndex < textChunks.length && !isPrefetching) {
+            isPrefetching = true; // Set prefetching flag
             const batchEndIndex = Math.min(currentIndex + 3, textChunks.length);
             const batch = textChunks.slice(currentIndex, batchEndIndex).join(' ');
 
             audioSegmentsMap.push({ start: currentIndex, end: batchEndIndex - 1 });
-            currentIndex = batchEndIndex; // 更新 currentIndex
-             const postData = {
+            currentIndex = batchEndIndex;
+            console.log("send to api:",batch)
+            const postData = {
                 text: batch,
-                rate: speechRate // 添加语速 rate 参数
+                rate: speechRate
             };
-            console.log("Sending to TTS API:", batch);
+
             fetch(apiUrlInput.value, {
                 method: "POST",
                 headers: {
@@ -202,31 +213,67 @@ window.onload = function() {
             })
             .then(audioBlob => {
                 audioQueue.push(audioBlob);
-                if (!isPlaying && audioQueue.length === 1) {
+                if (!isPlaying && audioQueue.length > 0) {
                     playNextAudio();
                 }
-                isPrefetching = false; // 预载入完成后重置
             })
             .catch(error => {
                 console.error("Error fetching from TTS API:", error);
-                isPrefetching = false; // 预载入完成后重置
+            })
+            .finally(() => {
+                isPrefetching = false; // Reset prefetching flag
+                console.log("Prefetching finished");
             });
-
+        }else{
+            console.log("Prefetching skipped");
         }
     }
 
-
-     // 更新文本显示容器的内容
+    // Update the text display with clickable segments
     function updateTextDisplay(segments) {
         textDisplayContainer.innerHTML = '';
         segments.forEach((segment, index) => {
             const div = document.createElement('div');
             div.textContent = segment;
             div.id = 'segment-' + index;
+            div.classList.add('text-segment');
+            div.addEventListener('click', function() {
+                handleSegmentClick(index);
+            });
             textDisplayContainer.appendChild(div);
         });
     }
 
+    // Function to handle clicking on a text segment
+    function handleSegmentClick(index) {
+        const segmentElement = document.getElementById('segment-' + index);
+        if (segmentElement) {
+            showTooltip(segmentElement);
+        }
+        currentIndex = index; // Update the current index to the clicked segment
+        audioQueue = []; // Clear the audio queue
+        audioSegmentsMap = []; // Clear the segments map
+        prefetchNextBatch(); // Prefetch audio starting from the clicked segment
+        if (currentAudio) {
+            currentAudio.pause(); // Pause any currently playing audio
+            currentAudio = null; // Reset the current audio
+            isPlaying = false
+        }
+        playNextAudio(); // Start playing from the new segment
+    }
+
+    function showTooltip(element) {
+        const tooltip = document.getElementById('loadingTooltip');
+        const rect = element.getBoundingClientRect();
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${rect.left}px`;
+        tooltip.style.top = `${rect.bottom + 5}px`; // 5px below the segment
+    }
+
+    function hideTooltip() {
+        const tooltip = document.getElementById('loadingTooltip');
+        tooltip.style.display = 'none';
+    }
 
    // Function to highlight a range of segments
     function highlightSegmentsRange(startIndex, endIndex) {
@@ -248,6 +295,10 @@ window.onload = function() {
             currentSegmentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
+
+
+
+
 
     function saveRemainingText() {
     // 获取未播放的文本

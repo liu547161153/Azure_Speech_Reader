@@ -148,7 +148,7 @@ window.onload = function() {
         audio.addEventListener('timeupdate', function() {
             const currentTime = audio.currentTime;
             const duration = audio.duration;
-            if (currentTime / duration > 0.7 && !hasPrefetched && currentIndex < textChunks.length) {
+            if (currentTime / duration > 0.5 && !hasPrefetched && currentIndex < textChunks.length) {
 
                 prefetchNextBatch();
                 hasPrefetched = true; // 设置本地标记，避免重复预载入
@@ -187,7 +187,7 @@ window.onload = function() {
     function prefetchNextBatch() {
         if (currentIndex < textChunks.length && !isPrefetching) {
             isPrefetching = true; // Set prefetching flag
-            const batchEndIndex = Math.min(currentIndex + 3, textChunks.length);
+            const batchEndIndex = Math.min(currentIndex + 7, textChunks.length);
             const batch = textChunks.slice(currentIndex, batchEndIndex).join(' ');
 
             audioSegmentsMap.push({ start: currentIndex, end: batchEndIndex - 1 });
